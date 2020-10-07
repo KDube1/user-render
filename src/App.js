@@ -10,22 +10,22 @@ const useFetch = (url, url2) => {
   // Similar to componentDidMount and componentDidUpdate:
   useEffect(async () => {
     const response = await fetch(url);
-    const data = await response.json();
+    const JSONdata = await response.json();
 
     //fetch the second url
     const response2 = await fetch(url2);
-    const playerData = await response2.json();
+    const playerJSONData = await response2.json();
 
     /*FOR AN ARRAY IN AN OBJECT*/
     const item = [];
-    for (let i in data.data) {
-      item.push(data.data[i]);
+    for (let i in JSONdata.data) {
+      item.push(JSONdata.data[i]);
     }
     setData(item);
 
     const item2 = [];
-    for (let i in playerData.data) {
-      item2.push(playerData.data[i]);
+    for (let i in playerJSONData.data) {
+      item2.push(playerJSONData.data[i]);
     }
     setPlayerData(item2);
 
