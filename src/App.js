@@ -38,6 +38,7 @@ export default function App(){
 
   const [q, setQ] = useState("");
   const { data, loading } = useFetch("https://www.balldontlie.io/api/v1/teams");
+  const [teamName, setTeamName] = useState("Team name");
   
 
   const options = {
@@ -91,6 +92,13 @@ export default function App(){
   }
 ]
 
+const rowEvents = {
+  onClick: (e, row, rowIndex) => {
+    if(row.name === "Raptors"){
+   setTeamName("Your 2019 champs");
+  }
+}
+};
   
 //ONLY FOR THE ARRAY ENDPOINT
 /*
@@ -117,8 +125,11 @@ function search(rows){
         keyField='id' 
         data={ search(data) } 
         columns={ columns } 
-        pagination={ paginationFactory(options) }/>
+        pagination={ paginationFactory(options) }
+        rowEvents={rowEvents}/>
 
+
+  <h1>{teamName}</h1>
     </div>
   );
 };
