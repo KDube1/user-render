@@ -1,53 +1,39 @@
 import React, { useState, useEffect } from "react";
 import BootstrapTable from 'react-bootstrap-table-next';
 import paginationFactory from 'react-bootstrap-table2-paginator';
-
-
-const useFetch = (url, url2) => {
-  const [data, setData] = useState([]);
-  const [playerData, setPlayerData] = useState([]);
-
-  // Similar to componentDidMount and componentDidUpdate:
-  useEffect(async () => {
-    const response = await fetch(url);
-    const JSONdata = await response.json();
-
-    //fetch the second url
-    const response2 = await fetch(url2);
-    const playerJSONData = await response2.json();
-
-    /*FOR AN ARRAY IN AN OBJECT*/
-    const item = [];
-    for (let i in JSONdata.data) {
-      item.push(JSONdata.data[i]);
-    }
-    setData(item);
-
-    const item2 = [];
-    for (let i in playerJSONData.data) {
-      item2.push(playerJSONData.data[i]);
-    }
-    setPlayerData(item2);
-
-
-    //https://devmentor.live/api/examples/contacts.json?api_key=98477c0d
-    /*WHEN THE ENDPOINT IS JUST AN ARRAY*/
-    /*setData(data);
-    */
-  }, []);
-
-  return { data, playerData };
-};
+import filterFactory, {textFilter} from 'react-bootstrap-table2-filter'
 
 
 export default function App() {
-
-
-  const [q, setQ] = useState("");
-  const { data, playerData } = useFetch("https://www.balldontlie.io/api/v1/teams", "https://www.balldontlie.io/api/v1/players?search=kyle");
+  const [data, setData] = useState([]);
+//const [q, setQ] = useState("");
 
   const [teamName, setTeamName] = useState("Team name");
 
+
+    // Similar to componentDidMount and componentDidUpdate:
+    useEffect( () => {
+    
+      fetch("https://www.balldontlie.io/api/v1/teams")
+      .then(response => response.json())
+      .then(json => alterJSON(json));
+  
+   
+  function alterJSON(json){
+      /*FOR AN ARRAY IN AN OBJECT*/
+      const item = [];
+      for (let i in json.data) {
+        item.push(json.data[i]);
+      }
+      setData(item);
+    }
+  
+  
+      //https://devmentor.live/api/examples/contacts.json?api_key=98477c0d
+      /*WHEN THE ENDPOINT IS JUST AN ARRAY*/
+      /*setData(data);
+      */
+    }, []);
 
 
   const options = {
@@ -73,7 +59,8 @@ export default function App() {
     dataField: 'city',
     text: 'City',
     searchable: true,
-    sort: true
+    sort: true,
+    filter: textFilter()
 
   },
   {
@@ -124,24 +111,30 @@ export default function App() {
     row.firstName.indexOf(q) > -1);
   }
   */
+  
 
 
   //ONLY FOR THE array in object
-  function search(rows) {
+  /*function search(rows) {
     return rows.filter(row => row.name.toLowerCase().indexOf(q) > -1 ||
       row.name.indexOf(q) > -1 || row.full_name.toLowerCase().indexOf(q) > -1);
   }
+  */
+
+  //move this directly under div to use
+  //    <input class="form-control" type="text" value={q} onChange={(e) => setQ(e.target.value)} placeHolder="Search first name here" />
 
   return (
     <div>
-      <input class="form-control" type="text" value={q} onChange={(e) => setQ(e.target.value)} placeHolder="Search first name here" />
+  
       <BootstrapTable
         striped
         hover
         keyField='id'
-        data={search(data)}
+        data={data}
         columns={columns}
         pagination={paginationFactory(options)}
+        filter = {filterFactory()}
         rowEvents={rowEvents} />
 
 
